@@ -1,0 +1,677 @@
+swagger: "2.0"
+info:
+  title: Training scheduler API
+  description: APIs to handle trainer, trainee, training schedules
+  version: 1.0.1
+host: localhost:8000
+securityDefinitions:
+  BearerAuth:
+    type: apiKey
+    name: Authorization
+    in: header
+tags:
+  - name: admin
+    description: admin has the capability to obtain jwt
+  - name: trainee
+    description: Endpoints to manipulate the trainee details
+  - name: trainer
+    description: Endpoints to manipulate the trainer details
+  - name: company
+    description: Endpoints for using the data related to the outsourced companies
+  - name: track
+    description: Endpoints to create / fetch tracks
+  - name: training
+    description: Endpoints for CRUD in training
+paths:
+  /admin/signup:
+    x-swagger-router-controller: admin.controller
+    post:
+      tags:
+        - admin
+      summary: Add new admin
+      description: ""
+      operationId: addAdmin
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Admin object that has to be added
+          required: true
+          schema:
+            $ref: "#/definitions/Admin"
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Admin"
+  /admin/login:
+    x-swagger-router-controller: admin.controller
+    post:
+      tags:
+        - admin
+      summary: Login admin
+      description: ""
+      operationId: loginAdmin
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Admin object
+          required: true
+          schema:
+            $ref: "#/definitions/Admin"
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            type: object
+  /trainee:
+    x-swagger-router-controller: trainee.controller
+    post:
+      tags:
+        - trainee
+      security:
+        - BearerAuth: []
+      summary: Add a new trainee
+      description: ""
+      operationId: addTrainee
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Trainee object that has to be added
+          required: true
+          schema:
+            $ref: "#/definitions/Trainee"
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Trainee"
+    get:
+      tags:
+        - trainee
+      summary: Get trainees data
+      description: ""
+      operationId: getTrainees
+      parameters:
+        - name: _id
+          in: query
+          description: ID of trainee to return
+          type: string
+        - name: email
+          in: query
+          description: email of the trainee to return
+          type: string
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Trainee"
+    delete:
+      tags:
+        - trainee
+      summary: delete trainee by ID
+      description: deletes a single trainee
+      operationId: deleteTrainee
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: _id
+          in: query
+          required: true
+          description: ID of the trainee to be deleted
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/deleteAcknowledged"
+    patch:
+      tags:
+        - trainee
+      summary: Update trainee by ID
+      description: updates a single trainee
+      operationId: updateTrainee
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: _id
+          required: true
+          description: ID of the trainee to be updated
+          type: string
+        - in: body
+          name: body
+          description: Updated details
+          required: true
+          schema:
+            type: object
+      responses:
+        "200":
+          description: successful operation
+  /trainer:
+    x-swagger-router-controller: trainer.controller
+    post:
+      tags:
+        - trainer
+      summary: Add a new trainer
+      description: ""
+      operationId: addTrainer
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: body
+          name: body
+          description: Trainer object that has to be added
+          required: true
+          schema:
+            $ref: "#/definitions/Trainer"
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Trainer"
+    get:
+      tags:
+        - trainer
+      summary: Get trainers data
+      description: ""
+      operationId: getTrainers
+      parameters:
+        - name: _id
+          in: query
+          description: ID of trainer to return
+          type: string
+        - name: email
+          in: query
+          description: email of the trainer to return
+          type: string
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Trainer"
+    delete:
+      tags:
+        - trainer
+      summary: delete trainer by ID
+      description: deletes a single trainer
+      operationId: deleteTrainer
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: _id
+          in: query
+          required: true
+          description: ID of the trainer to be deleted
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/deleteAcknowledged"
+    patch:
+      tags:
+        - trainer
+      summary: Update trainer by ID
+      description: updates a single trainer
+      operationId: updateTrainer
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: _id
+          required: true
+          description: ID of the trainer to be updated
+          type: string
+        - in: body
+          name: body
+          description: Updated details
+          required: true
+          schema:
+            type: object
+      responses:
+        "200":
+          description: successful operation
+  /company:
+    x-swagger-router-controller: company.controller
+    post:
+      tags:
+        - company
+      summary: Add a new company
+      description: ""
+      operationId: addCompany
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: body
+          name: body
+          description: Company object that has to be added
+          required: true
+          schema:
+            $ref: "#/definitions/Company"
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Company"
+    get:
+      tags:
+        - company
+      summary: Get companies data
+      description: ""
+      operationId: getCompanies
+      parameters:
+        - name: search
+          in: query
+          description: ID/name of company to return
+          type: string
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Company"
+  /track:
+    x-swagger-router-controller: track.controller
+    post:
+      tags:
+        - track
+      summary: Add a new track
+      description: ""
+      operationId: addTrack
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: body
+          name: body
+          description: Track object that has to be added
+          required: true
+          schema:
+            $ref: "#/definitions/Track"
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Track"
+    get:
+      tags:
+        - track
+      summary: Get tracks
+      description: ""
+      operationId: getTracks
+      parameters:
+        - name: search
+          in: query
+          description: ID / name of track to return
+          type: string
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Track"
+  /track/training:
+    x-swagger-router-controller: track.controller
+    get:
+      tags:
+        - track
+      summary: Get tracks and training
+      description: ""
+      operationId: getTracksAndTrainings
+      parameters:
+        - name: search
+          in: query
+          description: ID / name of track to return
+          type: string
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Track"
+  /training:
+    x-swagger-router-controller: training.controller
+    post:
+      tags:
+        - training
+      summary: Add a new training
+      description: ""
+      operationId: addTraining
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: body
+          name: body
+          description: Training object that has to be added
+          required: true
+          schema:
+            $ref: "#/definitions/Training"
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Training"
+    get:
+      tags:
+        - training
+      summary: Get trainings
+      description: ""
+      operationId: getTrainings
+      parameters:
+        - name: search
+          in: query
+          description: ID / name of training to return
+          type: string
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Training"
+  /schedule:
+    x-swagger-router-controller: schedule.controller
+    post:
+      tags:
+        - schedule
+      summary: Add a new schedule
+      description: ""
+      operationId: addSchedule
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: body
+          name: body
+          description: Schedule object that has to be added
+          required: true
+          schema:
+            $ref: "#/definitions/Schedule"
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Schedule"
+    get:
+      tags:
+        - schedule
+      summary: Get trainings
+      description: ""
+      operationId: getSchedules
+      parameters:
+        - name: search
+          in: query
+          description: scheduleId / trainer email / trainee email to fetch schedules
+          type: string
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Schedule"
+definitions:
+  Trainee:
+    type: object
+    required:
+      - name
+      - email
+    properties:
+      name:
+        type: string
+        example: John
+      email:
+        type: string
+        example: s@123.com
+      teamName:
+        type: string
+        example: Engage
+      pastExperience:
+        type: string
+        example: Worked in NodeJS, ReactJS
+      interests:
+        type: array
+        items:
+          type: string
+        example:
+          - Testing
+          - development
+      education:
+        type: string
+        example: B.Tech
+  Trainer:
+    type: object
+    required:
+      - name
+      - email
+      - designation
+    properties:
+      name:
+        type: string
+        example: John
+      email:
+        type: string
+        example: s@123.com
+      designation:
+        type: string
+        example: Manager
+      companyId:
+        type: string
+        example: Swym Learners
+      dateOfJoining:
+        type: string
+        example: "02/01/2024"
+      experience:
+        type: integer
+        example: 4
+      skills:
+        type: array
+        items:
+          type: string
+        example:
+          - NodeJS
+          - ReactJs
+  Company:
+    type: object
+    required:
+      - name
+      - contactNumber
+      - email
+    properties:
+      name:
+        type: string
+        example: Swym Tech
+      contactNumber:
+        type: string
+        example: 1234567890
+      email:
+        type: string
+        example: s@123.com
+      expertise:
+        type: array
+        items:
+          type: string
+        example:
+          - Web devs
+          - JavaScript
+      certifications:
+        type: array
+        items:
+          type: string
+        example:
+          - ABCD
+          - MOSF
+      methods:
+        type: array
+        items:
+          type: string
+        example:
+          - Online
+          - In-person
+      website:
+        type: string
+        example: https://swym.it
+  Track:
+    type: object
+    required:
+      - name
+      - duration
+      - startingDate
+    properties:
+      name:
+        type: string
+        example: Path to build own apps
+      duration:
+        type: string
+        example: 4 days
+      startingDate:
+        type: string
+        example: "09/02/2024"
+      tags:
+        type: array
+        items:
+          type: string
+        example:
+          - Web devs
+          - JavaScript
+      outcome:
+        type: string
+        example: Learner will be able to build web apps on completing the course
+      illustration:
+        type: string
+        example: data:image/png;base64,iVBO.....
+  Training:
+    type: object
+    required:
+      - trackId
+      - name
+    properties:
+      trackId:
+        type: string
+      name:
+        type: string
+        example: Getting started with HTML
+      domain:
+        type: string
+        example: Web development
+      type:
+        type: string
+        example: Self paced
+      duration:
+        type: string
+        example: 6 days
+      deadline:
+        type: string
+        example: "29/02/2024"
+      reference_materials:
+        type: array
+        items:
+          type: string
+        example:
+          - w3schools
+          - Udemy
+      difficulty:
+        type: string
+        example: Easy
+  Schedule:
+    type: object
+    required:
+      - trainerEmail
+      - traineeEmails
+      - trainingId
+      - startTime
+      - endTime
+    properties:
+      trainerEmail:
+        type: string
+      traineeEmails:
+        type: array
+        items:
+          type: string
+      trainingId:
+        type: string
+      startTime:
+        type: string
+        example: "02/20/2024 15:00:00"
+      endTime:
+        type: string
+        example: "02/20/2024 16:00:00"
+  Admin:
+    type: object
+    required:
+      - username
+      - password
+    properties:
+      username:
+        type: string
+        example: kannan
+      password:
+        type: string
+        example: test123
+  deleteAcknowledged:
+    type: object
+    properties:
+      acknowledged:
+        type: boolean
+      deletedCount:
+        type: integer
+# {
+#   "trainerId": "65ca2554e15fb4c4b7df9665",
+#   "traineeIds": [
+#     "65ca2574e15fb4c4b7df9667"
+#   ],
+#   "trainingId": "65ca2526e15fb4c4b7df9663",
+#   "startTime": "02/20/2024 15:00:00",
+#   "endTime": "02/20/2024 16:00:00"
+# }
